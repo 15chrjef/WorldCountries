@@ -12,7 +12,7 @@ export default class SettingsScreen extends React.Component {
     return (
 			<View style={{
         height: 50, 
-        backgroundColor: 'background: rgba(0, 0, 0, 0.7);', 
+        backgroundColor: 'background: rgba(26,163,219, 0.7);', 
         justifyContent: 'flex-end', 
         alignItems: 'center',
         marginBottom: 20

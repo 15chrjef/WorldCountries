@@ -76,7 +76,7 @@ export default class HomeScreen extends React.Component {
         <View>
           <Title/>
             <View style={styles.ListView}>
-              <Text style={{fontWeight: 'bold', marginBottom: 10}}>Select a  Country</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 20, color:'rgb(26,163,219)', marginBottom: 10}}>Select a  Country</Text>
               <ListView
                 contentContainerStyle={styles.List}
                 dataSource={this.state.names}

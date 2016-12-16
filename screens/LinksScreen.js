@@ -7,11 +7,14 @@ import {
   Text,
   View,
   ListView,
-  Dimensions
+  Dimensions,
+  Picker,
 } from 'react-native';
 import {
   ExponentLinksView,
 } from '@exponent/samples';
+import Title from '../components/title.js'
+import PickModal from '../components/pickModal.js'
 var {height, width} = Dimensions.get('window');
 
 
@@ -21,18 +24,21 @@ export default class LinksScreen extends React.Component {
     this.state = {
       text: '',
       results: '',
-      error: false
+      error: false,
+      picker: 'name',
+      modalVisible: false
     }
-    this.search = this.search.bind(this);
+  this.Search = this.Search.bind(this)
+  this.ModalChoice = this.ModalChoice.bind(this)
   }
   static route = {
     navigationBar: {
       visible: false,
     }
   }
-  search() {
+  Search() {
     var self = this;
-    fetch(`https://restcountries.eu/rest/v1/name/${self.state.text}`)
+    fetch(`https://restcountries.eu/rest/v1/${self.state.picker}/${self.state.text.toLowerCase()}`)
     .then(function(response) {
       if(response.status === '404' || response.status === 404) {
         self.setState({
@@ -47,6 +53,7 @@ export default class LinksScreen extends React.Component {
     .then(function(myResponse) {
       if(myResponse === 'error'){
         return;
+              console.log('selfselfselfself', self.state)
       } else if(Array.isArray(myResponse))  {
         let realNames = [];
         myResponse.forEach(function(country) {
@@ -67,19 +74,28 @@ export default class LinksScreen extends React.Component {
           error: true
         })
       }
+      console.log('selfselfselfself', self.state)
     })
     .catch(function(err) {
       console.error(err)
     })
   }
+   ModalChoice(input){
+    console.log('input',input)
+    this.setState({
+      picker: input,
+      modalVisible: !this.state.modalVisible
+    })
+  }
   renderResults(){
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     if(this.state.results !== '' && this.state.error === false) {
+          console.log('here')
       return (
-        <View style={{alignItems: 'center'}}>
+        <View style={{alignItems: 'center', marginTop: 30}}>
           <Text style={{fontWeight: 'bold', fontSize: 20, marginBottom: 10, marginTop: 10}}>Search Results</Text>
           <ListView 
-            contentContainerStyle={{alignItems: 'center'}}
+            contentContainerStyle={{alignItems: 'center', height: height * 1.1}}
             dataSource={ds.cloneWithRows(this.state.results)}
             renderRow={(rowData) => <Text>{rowData}</Text>}
             />
@@ -87,29 +103,48 @@ export default class LinksScreen extends React.Component {
       )
     } else if(this.state.error === true) {
       return (
-        <Text style={{color: 'red'}}>No Results Found!</Text>
+        <Text style={{color: 'red', marginTop: 20}}>No Results Found!</Text>
       )
     }
   }
   render() {
+    var self = this;
       return (
-         <View style={styles.container}>
-          <Text>Find a Country</Text>
-          <TextInput
-            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-            placeholder='search here'
-            onChangeText={(text) => this.setState({text})}
-            value={this.state.text}
-            />
-          <View style={styles.body}>
-            <TouchableHighlight 
-              style={{marginTop: 20, borderWidth: 1, borderLeftColor: 'black', width: 85}} 
-              onPress={this.search  }
-              >
-              <Text>Search Now!</Text>
-            </TouchableHighlight>
-            {this.renderResults()}
-          </View>
+         <View>
+          <Title/>
+            <View style={styles.body}>
+              <Text>Find a Country</Text>
+              <TextInput
+                style={{height: 40, borderColor: 'gray', borderWidth: 1, width: width * .9 , alignSelf: 'center'}}
+                placeholder='Search Here...'
+                onChangeText={(text) => this.setState({text})}
+                value={this.state.text}
+                />
+              <View style={{flexDirection:'row', justifyContent: 'space-between', width: width * .7}}>
+                <TouchableHighlight 
+                  style={{marginTop: 20,height: 20, borderWidth: 1, borderLeftColor: 'black', width: 125}} 
+                  onPress={function(){
+                    self.setState({
+                      modalVisible: true
+                    })}
+                  }
+                  >
+                  <Text style={{alignSelf: 'center'}}>Select Category</Text>
+                </TouchableHighlight>
+                <TouchableHighlight 
+                  style={{marginTop: 20,height: 20, borderWidth: 1, borderLeftColor: 'black', width: 125}} 
+                  onPress={this.Search}
+                  >
+                  <Text style={{alignSelf: 'center'}}>Search Now!</Text>
+                </TouchableHighlight>
+              </View>
+              <PickModal 
+                picker={this.state.picker} 
+                modalVisible={this.state.modalVisible} 
+                modalChoice={this.ModalChoice.bind(this)} 
+                />
+              {this.renderResults()}
+            </View>
         </View>
       )
     }
@@ -123,6 +158,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   body: {
-    alignItems: 'center'
+    alignItems: 'center',
   }
 });

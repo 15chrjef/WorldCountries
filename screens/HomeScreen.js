@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 var {height, width} = Dimensions.get('window');
 import { MonoText } from '../components/StyledText';
-
+import Title from '../components/title.js'
 export default class HomeScreen extends React.Component {
   constructor(){
     super()
@@ -57,28 +57,32 @@ export default class HomeScreen extends React.Component {
     if(this.state.country !== '') {
       let country = this.state.country
       return(
-        <View style={styles.select}>
-          <View><Text style={{fontWeight: 'bold', fontSize: 25}}>Country Select</Text></View>
-          <View style={{flexDirection: 'row'}}><Text style={{fontWeight: 'bold'}}>name: </Text><Text>{country.name}</Text></View>
-          <View style={{flexDirection: 'row'}}><Text style={{fontWeight: 'bold'}}>languages: </Text><Text>{country.languages}</Text></View>
-          <View style={{flexDirection: 'row'}}><Text style={{fontWeight: 'bold'}}>capital: </Text><Text>{country.capital}</Text></View>
-          <View style={{flexDirection: 'row'}}><Text style={{fontWeight: 'bold'}}>sub-region: </Text><Text>{country.subregion}</Text></View>
-          <View style={{flexDirection: 'row'}}><Text style={{fontWeight: 'bold'}}>region: </Text><Text>{country.region}</Text></View>
-          <View style={{flexDirection: 'row'}}><Text style={{fontWeight: 'bold'}}>nativeName: </Text><Text>{country.nativeName}</Text></View>
-          <TouchableOpacity onPress={self.returnMe.bind(self)} style={styles.return}><Text>Return to Countries</Text></TouchableOpacity>
+        <View>
+          <Title/>
+          <View style={styles.select}>
+            <View><Text style={{fontWeight: 'bold', fontSize: 25}}>Country Select</Text></View>
+            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Name: </Text><Text>{country.name}</Text></View>
+            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Languages: </Text><Text>{country.languages}</Text></View>
+            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Capital: </Text><Text>{country.capital}</Text></View>
+            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Sub-Region: </Text><Text>{country.subregion}</Text></View>
+            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Region: </Text><Text>{country.region}</Text></View>
+            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>NativeName: </Text><Text>{country.nativeName}</Text></View>
+            <TouchableOpacity onPress={self.returnMe.bind(self)} style={styles.return}><Text>Return to Countries</Text></TouchableOpacity>
+          </View>
         </View>
       )
     } else if(this.state.names !== '') {
       return (
-        <View style={styles.container}>
-          <View style={styles.ListView}>
-            <Text style={{fontWeight: 'bold', marginBottom: 10}}>Select a  Country</Text>
-            <ListView
-              contentContainerStyle={styles.List}
-              dataSource={this.state.names}
-              renderRow = {(country) => <TouchableOpacity onPress={function(){self.displayInfo(country)}}><Text>{country.name}</Text></TouchableOpacity>}
-            />
-          </View>
+        <View>
+          <Title/>
+            <View style={styles.ListView}>
+              <Text style={{fontWeight: 'bold', marginBottom: 10}}>Select a  Country</Text>
+              <ListView
+                contentContainerStyle={styles.List}
+                dataSource={this.state.names}
+                renderRow = {(country) => <TouchableOpacity onPress={function(){self.displayInfo(country)}}><Text>{country.name}</Text></TouchableOpacity>}
+              />
+            </View>
         </View>
       );
     } else {
@@ -93,69 +97,29 @@ export default class HomeScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 15,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 80,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 200,
-    height: 34.5,
-    marginTop: 3,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
   ListView: {
     height: height * .8,
     alignItems: 'center',
-    marginTop: 40
+  },
+  listRow: {
+    flexDirection: 'row',
+    marginTop: 10
   },
   List: {
     marginTop: 15,
     marginBottom: 15,
     alignItems: 'center'
   },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
   return: {
     borderRadius: 5,
     borderColor: 'black',
     borderWidth: 1,
     borderStyle: 'solid',
-    padding: 4
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 23,
-    textAlign: 'center',
+    padding: 4,
+    marginTop: 15,
   },
   select: {
-    marginTop: 30,
+    marginTop: 20,
     alignItems: 'center',
     justifyContent: 'center'
   },

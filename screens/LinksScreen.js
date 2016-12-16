@@ -93,7 +93,7 @@ export default class LinksScreen extends React.Component {
           console.log('here')
       return (
         <View style={{alignItems: 'center', marginTop: 30}}>
-          <Text style={{fontWeight: 'bold', fontSize: 20, marginBottom: 10, marginTop: 10}}>Search Results</Text>
+          <Text style={{color:'rgb(26,163,219)',fontWeight: 'bold', fontSize: 20}}>Search Results</Text>
           <ListView 
             contentContainerStyle={{alignItems: 'center', height: height * 1.1}}
             dataSource={ds.cloneWithRows(this.state.results)}
@@ -113,7 +113,8 @@ export default class LinksScreen extends React.Component {
          <View>
           <Title/>
             <View style={styles.body}>
-              <Text>Find a Country</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 17, color:'rgb(26,163,219)'}}>Find a Country</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 17, color:'rgb(26,163,219)'}}>Searching by {this.state.picker}</Text>
               <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 1, width: width * .9 , alignSelf: 'center'}}
                 placeholder='Search Here...'
@@ -122,20 +123,20 @@ export default class LinksScreen extends React.Component {
                 />
               <View style={{flexDirection:'row', justifyContent: 'space-between', width: width * .7}}>
                 <TouchableHighlight 
-                  style={{marginTop: 20,height: 20, borderWidth: 1, borderLeftColor: 'black', width: 125}} 
+                  style={{marginTop: 20,height: 30, justifyContent: 'center', backgroundColor: 'rgb(26,163,219)', width: 135}} 
                   onPress={function(){
                     self.setState({
                       modalVisible: true
                     })}
                   }
                   >
-                  <Text style={{alignSelf: 'center'}}>Select Category</Text>
+                  <Text style={{fontSize:16,fontWeight: 'bold', alignSelf: 'center', color: 'white'}}>Select Category</Text>
                 </TouchableHighlight>
                 <TouchableHighlight 
-                  style={{marginTop: 20,height: 20, borderWidth: 1, borderLeftColor: 'black', width: 125}} 
+                  style={{marginTop: 20,height: 30, justifyContent: 'center', backgroundColor: 'rgb(26,163,219)', width: 125}} 
                   onPress={this.Search}
                   >
-                  <Text style={{alignSelf: 'center'}}>Search Now!</Text>
+                  <Text style={{fontSize:16, fontWeight: 'bold',alignSelf: 'center', color: 'white'}}>Search Now!</Text>
                 </TouchableHighlight>
               </View>
               <PickModal 

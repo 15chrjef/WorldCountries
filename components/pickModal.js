@@ -27,7 +27,7 @@ export default class SettingsScreen extends React.Component {
           visible={this.props.modalVisible}
           onRequestClose={() => {alert("Modal has been closed.")}}
           >
-         <View style={{height: height, justifyContent: 'center', backgroundColor: 'background:rgba(0,0,0, .4)'}}>
+         <View style={{height: height, justifyContent: 'center', backgroundColor: 'background:rgba(101,100,100, .4)'}}>
           <Picker
 						selectedValue={this.props.picker}
 						onValueChange={function(value){self.props.modalChoice(value)}}

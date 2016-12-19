@@ -9,12 +9,14 @@ import {
   ListView,
   Dimensions,
   Picker,
+  TouchableOpacity
 } from 'react-native';
 import {
   ExponentLinksView,
 } from '@exponent/samples';
 import Title from '../components/title.js'
 import PickModal from '../components/pickModal.js'
+import PickCountry from '../components/pickCountry.js'
 var {height, width} = Dimensions.get('window');
 
 
@@ -26,10 +28,12 @@ export default class LinksScreen extends React.Component {
       results: '',
       error: false,
       picker: 'name',
-      modalVisible: false
+      modalVisible: false,
+      country: ''
     }
   this.Search = this.Search.bind(this)
   this.ModalChoice = this.ModalChoice.bind(this)
+  this.displayInfo = this.displayInfo.bind(this)
   }
   static route = {
     navigationBar: {
@@ -53,11 +57,10 @@ export default class LinksScreen extends React.Component {
     .then(function(myResponse) {
       if(myResponse === 'error'){
         return;
-              console.log('selfselfselfself', self.state)
       } else if(Array.isArray(myResponse))  {
         let realNames = [];
         myResponse.forEach(function(country) {
-          realNames.push(country.name)
+          realNames.push(country)
         })
         self.setState({
           results: realNames,
@@ -74,30 +77,49 @@ export default class LinksScreen extends React.Component {
           error: true
         })
       }
-      console.log('selfselfselfself', self.state)
     })
     .catch(function(err) {
       console.error(err)
     })
   }
    ModalChoice(input){
-    console.log('input',input)
-    this.setState({
+      this.setState({
       picker: input,
       modalVisible: !this.state.modalVisible
     })
   }
+  displayInfo(country){
+    if(this.state.country === '') {
+      this.setState({
+        country: country
+      })
+    } else {
+      this.setState({
+        country: ''
+      })
+    }
+  }
   renderResults(){
+    var self = this;
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     if(this.state.results !== '' && this.state.error === false) {
-          console.log('here')
       return (
         <View style={{alignItems: 'center', marginTop: 30}}>
           <Text style={{color:'rgb(26,163,219)',fontWeight: 'bold', fontSize: 20}}>Search Results</Text>
           <ListView 
-            contentContainerStyle={{alignItems: 'center', height: height * 1.1}}
+            initialListSize={180}
+            contentContainerStyle={styles.List}
             dataSource={ds.cloneWithRows(this.state.results)}
-            renderRow={(rowData) => <Text>{rowData}</Text>}
+            renderRow={(country) => (
+              <TouchableHighlight 
+                style={{marginBottom: 10, marginRight: 20}} 
+                onPress={function(){self.displayInfo(country)}}
+                >
+                  <Text style={{fontWeight: 'bold',fontSize: 16}}>
+                    {country.name}
+                  </Text>
+              </TouchableHighlight>
+            )}
             />
         </View>
       )
@@ -109,6 +131,12 @@ export default class LinksScreen extends React.Component {
   }
   render() {
     var self = this;
+    if(this.state.country !== '') {
+      let country = this.state.country
+      return(
+        <PickCountry country={country} displayInfo={self.displayInfo}/>
+      )
+    } else {
       return (
          <View>
           <Title/>
@@ -116,7 +144,7 @@ export default class LinksScreen extends React.Component {
               <Text style={{fontWeight: 'bold', fontSize: 17, color:'rgb(26,163,219)'}}>Find a Country</Text>
               <Text style={{fontWeight: 'bold', fontSize: 17, color:'rgb(26,163,219)'}}>Searching by {this.state.picker}</Text>
               <TextInput
-                style={{height: 40, borderColor: 'gray', borderWidth: 1, width: width * .9 , alignSelf: 'center'}}
+                style={{paddingLeft: 20, height: 40, borderColor: 'gray', borderWidth: 1, width: width * .9 , alignSelf: 'center'}}
                 placeholder='Search Here...'
                 onChangeText={(text) => this.setState({text})}
                 value={this.state.text}
@@ -148,9 +176,19 @@ export default class LinksScreen extends React.Component {
             </View>
         </View>
       )
-    }
+    }    
+  }
 }
 const styles = StyleSheet.create({
+  List: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: width * .8,
+    marginTop: 15,
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     marginTop: 30,
     flex: 1,
@@ -160,5 +198,23 @@ const styles = StyleSheet.create({
   },
   body: {
     alignItems: 'center',
+  },
+  select: {
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+   return: {
+    borderRadius: 5,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    padding: 4,
+    marginTop: 15,
+  },
+    listRow: {
+    flexDirection: 'row',
+    marginTop: 10
   }
 });
+

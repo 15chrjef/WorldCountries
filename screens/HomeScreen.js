@@ -14,6 +14,7 @@ import {
 var {height, width} = Dimensions.get('window');
 import { MonoText } from '../components/StyledText';
 import Title from '../components/title.js'
+import PickCountry from '../components/pickCountry'
 export default class HomeScreen extends React.Component {
   constructor(){
     super()
@@ -21,11 +22,7 @@ export default class HomeScreen extends React.Component {
       names: '',
       country: ''
     }
-  }
-  static route = {
-    navigationBar: {
-      visible: false,
-    }
+    this.displayInfo = this.displayInfo.bind(this);
   }
   componentWillMount() {
     let self = this;
@@ -43,33 +40,22 @@ export default class HomeScreen extends React.Component {
     })
   }
   displayInfo(country){
-    this.setState({
-      country: country
-    })
-  }
-  returnMe(){
-    this.setState({
-      country: ''
-    })
+    if(this.state.country === '') {
+      this.setState({
+        country: country
+      })
+    } else {
+      this.setState({
+        country: ''
+      })
+    }
   }
   render() {
     var self = this;
     if(this.state.country !== '') {
       let country = this.state.country
       return(
-        <View>
-          <Title/>
-          <View style={styles.select}>
-            <View><Text style={{fontWeight: 'bold', fontSize: 25}}>Country Select</Text></View>
-            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Name: </Text><Text>{country.name}</Text></View>
-            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Languages: </Text><Text>{country.languages}</Text></View>
-            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Capital: </Text><Text>{country.capital}</Text></View>
-            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Sub-Region: </Text><Text>{country.subregion}</Text></View>
-            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>Region: </Text><Text>{country.region}</Text></View>
-            <View style={styles.listRow}><Text style={{fontWeight: 'bold'}}>NativeName: </Text><Text>{country.nativeName}</Text></View>
-            <TouchableOpacity onPress={self.returnMe.bind(self)} style={styles.return}><Text>Return to Countries</Text></TouchableOpacity>
-          </View>
-        </View>
+        <PickCountry displayInfo={this.displayInfo} country={country}/>
       )
     } else if(this.state.names !== '') {
       return (
@@ -78,9 +64,19 @@ export default class HomeScreen extends React.Component {
             <View style={styles.ListView}>
               <Text style={{fontWeight: 'bold', fontSize: 20, color:'rgb(26,163,219)', marginBottom: 10}}>Select a  Country</Text>
               <ListView
+                initialListSize={180}
                 contentContainerStyle={styles.List}
                 dataSource={this.state.names}
-                renderRow = {(country) => <TouchableOpacity onPress={function(){self.displayInfo(country)}}><Text>{country.name}</Text></TouchableOpacity>}
+                renderRow = {(country) => (
+                  <TouchableOpacity 
+                    style={{marginBottom: 10, marginRight: 20}} 
+                    onPress={function(){self.displayInfo(country)}}
+                    >
+                    <Text style={{fontWeight: 'bold',fontSize: 20}}>
+                      {country.name}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               />
             </View>
         </View>
@@ -106,9 +102,13 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   List: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: width * .8,
     marginTop: 15,
     marginBottom: 15,
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   return: {
     borderRadius: 5,

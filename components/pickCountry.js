@@ -4,7 +4,8 @@ import {
   Text,
   View,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import {
   ExponentLinksView,
@@ -14,11 +15,11 @@ var {height, width} = Dimensions.get('window');
 
 export default class LinksScreen extends React.Component {
   render() {
+    console.log(this.props.country.flag)
 		return(
 			<View>
 				<Title/>
 				<View style={styles.select}>
-					<View><Text style={{fontWeight: 'bold', fontSize: 25}}>Country Select</Text></View>
           <View style={styles.listRow}>
             <Text style={{fontWeight: 'bold', fontSize: 20}}>Name: </Text>
             <Text style={{fontSize: 20}}>{this.props.country.name}</Text>
@@ -43,11 +44,12 @@ export default class LinksScreen extends React.Component {
             <Text style={{fontWeight: 'bold', fontSize: 20}}>NativeName: </Text>
             <Text style={{fontSize: 20}}>{this.props.country.nativeName}</Text>
           </View>
+          <Image style={{marginTop: 10, marginBottom: 10, width: 200, height: 100}} source={{uri: this.props.country.flag}}/>
 					<TouchableOpacity 
             onPress={this.props.displayInfo} 
             style={styles.return}
             >
-            <Text>Return to Countries</Text>
+            <Text style={{fontSize:20, fontWeight: 'bold',alignSelf: 'center', color: 'white'}}>Return to Countries</Text>
           </TouchableOpacity>
 				</View>
 			</View>
@@ -71,12 +73,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
    return: {
-    borderRadius: 5,
-    borderColor: 'black',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    padding: 4,
-    marginTop: 15,
+    marginBottom: 10, 
+    paddingLeft: 5,
+    paddingRight: 5, 
+    borderRadius: 2, 
+    backgroundColor:'rgba(26,163,219,.4)'
   },
     listRow: {
     flexDirection: 'row',

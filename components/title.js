@@ -11,7 +11,7 @@ export default class SettingsScreen extends React.Component {
   render() {
     return (
 			<View style={{
-        height: 50, 
+        height: 70, 
         backgroundColor: 'background: rgba(26,163,219, 0.7);', 
         justifyContent: 'flex-end', 
         alignItems: 'center',
@@ -19,9 +19,8 @@ export default class SettingsScreen extends React.Component {
       }}>
 				<Text style={{
           color:'white',
-          fontSize: 20,
-
-        }}>Country App</Text>
+          fontSize: 25
+        }}>Countrify</Text>
 			</View>
     );
   }

@@ -1,21 +1,24 @@
 import React from 'react';
 import {
-  ScrollView,
   StyleSheet,
   TextInput,
-  TouchableHighlight,
   Text,
   View,
   ListView,
   Dimensions,
   Picker,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import {
   ExponentLinksView,
 } from '@exponent/samples';
 import Title from '../components/title.js'
 import PickModal from '../components/pickModal.js'
+import Colors from '../constants/Colors';
+import {
+  FontAwesome,
+} from '@exponent/vector-icons';
 import PickCountry from '../components/pickCountry.js'
 var {height, width} = Dimensions.get('window');
 
@@ -28,20 +31,22 @@ export default class LinksScreen extends React.Component {
       results: '',
       error: false,
       picker: 'name',
+      pickerLabel: 'Name',
       modalVisible: false,
-      country: ''
+      country: '',
+      animating: false
     }
   this.Search = this.Search.bind(this)
   this.ModalChoice = this.ModalChoice.bind(this)
   this.displayInfo = this.displayInfo.bind(this)
   }
-  static route = {
-    navigationBar: {
-      visible: false,
-    }
-  }
   Search() {
     var self = this;
+    self.setState({
+      text: '',
+      animating: true,
+      error: ''
+    })
     fetch(`https://restcountries.eu/rest/v1/${self.state.picker}/${self.state.text.toLowerCase()}`)
     .then(function(response) {
       if(response.status === '404' || response.status === 404) {
@@ -51,6 +56,7 @@ export default class LinksScreen extends React.Component {
         })
         return 'error';
       } else {
+      
          return JSON.parse(response._bodyInit)
       }
     })
@@ -60,16 +66,19 @@ export default class LinksScreen extends React.Component {
       } else if(Array.isArray(myResponse))  {
         let realNames = [];
         myResponse.forEach(function(country) {
+          country.flag = `http://www.geognos.com/api/en/countries/flag/${country.alpha2Code}.png`
           realNames.push(country)
         })
         self.setState({
           results: realNames,
-          error: false
+          error: false,
+          animating: false
         })
       } else if(myResponse.name){
         self.setState({
           results: [myResponse],
-          error: false
+          error: false,
+          animating: false
         })
       } else {
         self.setState({
@@ -82,9 +91,18 @@ export default class LinksScreen extends React.Component {
       console.error(err)
     })
   }
-   ModalChoice(input){
+   ModalChoice(value){
+      var label;
+      if(value === 'lang'){
+        label = 'Language'
+      } else if(value === 'name') {
+        label = 'Name'
+      } else {
+        label = 'Currency'
+      }
       this.setState({
-      picker: input,
+      picker: value,
+      pickerLabel: label,
       modalVisible: !this.state.modalVisible
     })
   }
@@ -104,28 +122,35 @@ export default class LinksScreen extends React.Component {
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     if(this.state.results !== '' && this.state.error === false) {
       return (
-        <View style={{alignItems: 'center', marginTop: 30}}>
-          <Text style={{color:'rgb(26,163,219)',fontWeight: 'bold', fontSize: 20}}>Search Results</Text>
+        <View style={styles.ListViewContainer}>
           <ListView 
             initialListSize={180}
-            contentContainerStyle={styles.List}
+            contentContainerStyle={styles.ListView} 
             dataSource={ds.cloneWithRows(this.state.results)}
             renderRow={(country) => (
-              <TouchableHighlight 
-                style={{marginBottom: 10, marginRight: 20}} 
+              <TouchableOpacity 
+                style={{marginBottom: 10, marginRight: 20, paddingLeft: 5, paddingRight: 5, borderRadius: 2, backgroundColor:'rgba(26,163,219,.4)' }} 
                 onPress={function(){self.displayInfo(country)}}
                 >
-                  <Text style={{fontWeight: 'bold',fontSize: 16}}>
+                  <Text style={{textAlign: 'center', color: 'white', fontSize: 20}}>
                     {country.name}
                   </Text>
-              </TouchableHighlight>
+              </TouchableOpacity>
             )}
             />
         </View>
       )
     } else if(this.state.error === true) {
       return (
-        <Text style={{color: 'red', marginTop: 20}}>No Results Found!</Text>
+        <Text style={{fontSize: 20, color: 'red', marginTop: 20}}>No Results Found!</Text>
+      )
+    } else {
+      return (
+        <ActivityIndicator
+          animating={self.state.animating}
+          style={{height: 80}}
+          size="large"
+          />
       )
     }
   }
@@ -141,31 +166,39 @@ export default class LinksScreen extends React.Component {
          <View>
           <Title/>
             <View style={styles.body}>
-              <Text style={{fontWeight: 'bold', fontSize: 17, color:'rgb(26,163,219)'}}>Find a Country</Text>
-              <Text style={{fontWeight: 'bold', fontSize: 17, color:'rgb(26,163,219)'}}>Searching by {this.state.picker}</Text>
-              <TextInput
-                style={{paddingLeft: 20, height: 40, borderColor: 'gray', borderWidth: 1, width: width * .9 , alignSelf: 'center'}}
-                placeholder='Search Here...'
-                onChangeText={(text) => this.setState({text})}
-                value={this.state.text}
-                />
-              <View style={{flexDirection:'row', justifyContent: 'space-between', width: width * .7}}>
-                <TouchableHighlight 
-                  style={{marginTop: 20,height: 30, justifyContent: 'center', backgroundColor: 'rgb(26,163,219)', width: 135}} 
+              <Text style={{marginTop: -20, fontWeight: 'bold', fontSize: 25, color:'rgb(26,163,219)'}}>Find a Country</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 17, color:'rgb(26,163,219)', marginBottom: -10}}>Searching by {this.state.pickerLabel}</Text>
+              <View style={{ marginTop: 20, paddingLeft: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderColor: 'gray', borderWidth: 1,borderRadius: 20, width: width * .8 , height: 40, alignSelf: 'center'}}>
+               <FontAwesome
+                  name={'language'}
+                  size={25}
+                  color={Colors.tabIconDefault}
+                  />
+                <TextInput
+                  style={{paddingLeft: 10, width: width * .8, height: 40}}
+                  underlineColorAndroid='transparent'
+                  placeholder='Search Here...'
+                  onChangeText={(text) => this.setState({text})}
+                  value={this.state.text}
+                  />
+              </View>
+              <View style={{flexDirection:'row', marginTop: -15, justifyContent: 'space-between', width: width * .6}}>
+                <TouchableOpacity 
+                  style={{marginTop: 20,height: 30, borderWidth: 1, justifyContent: 'center', borderColor: 'gray', borderRadius: 10, width: 100}} 
                   onPress={function(){
                     self.setState({
                       modalVisible: true
                     })}
                   }
                   >
-                  <Text style={{fontSize:16,fontWeight: 'bold', alignSelf: 'center', color: 'white'}}>Select Category</Text>
-                </TouchableHighlight>
-                <TouchableHighlight 
-                  style={{marginTop: 20,height: 30, justifyContent: 'center', backgroundColor: 'rgb(26,163,219)', width: 125}} 
+                  <Text style={{fontSize:18, alignSelf: 'center', color:'rgb(26,163,219)'}}>Category</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={{marginTop: 20,height: 30, borderWidth: 1, justifyContent: 'center', borderColor: 'gray', borderRadius: 10, width: 100}} 
                   onPress={this.Search}
                   >
-                  <Text style={{fontSize:16, fontWeight: 'bold',alignSelf: 'center', color: 'white'}}>Search Now!</Text>
-                </TouchableHighlight>
+                  <Text style={{fontSize:18,alignSelf: 'center', color:'rgb(26,163,219)'}}>Search</Text>
+                </TouchableOpacity>
               </View>
               <PickModal 
                 picker={this.state.picker} 
@@ -180,14 +213,26 @@ export default class LinksScreen extends React.Component {
   }
 }
 const styles = StyleSheet.create({
-  List: {
+  ListViewContainer: {
+    marginTop: 10,
+    height: height * .8,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  listRow: {
+    overflow: 'hidden',
+    flexDirection: 'row',
+    marginTop: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  ListView: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: width * .8,
-    marginTop: 15,
-    marginBottom: 15,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 180
   },
   container: {
     marginTop: 30,
@@ -198,23 +243,6 @@ const styles = StyleSheet.create({
   },
   body: {
     alignItems: 'center',
-  },
-  select: {
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-   return: {
-    borderRadius: 5,
-    borderColor: 'black',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    padding: 4,
-    marginTop: 15,
-  },
-    listRow: {
-    flexDirection: 'row',
-    marginTop: 10
   }
 });
 

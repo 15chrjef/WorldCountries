@@ -1,15 +1,13 @@
 import React from 'react';
 import {
   Image,
-  Linking,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   ListView,
-  Dimensions
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
 var {height, width} = Dimensions.get('window');
 import { MonoText } from '../components/StyledText';
@@ -20,7 +18,8 @@ export default class HomeScreen extends React.Component {
     super()
     this.state = {
       names: '',
-      country: ''
+      country: '',
+      animating: true
     }
     this.displayInfo = this.displayInfo.bind(this);
   }
@@ -30,6 +29,7 @@ export default class HomeScreen extends React.Component {
     .then(function(countries) {
       var names = []
       JSON.parse(countries._bodyInit).forEach(function(country) {
+        country.flag = `http://www.geognos.com/api/en/countries/flag/${country.alpha2Code}.png`
         names.push(country)
       })
       const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -42,7 +42,8 @@ export default class HomeScreen extends React.Component {
   displayInfo(country){
     if(this.state.country === '') {
       this.setState({
-        country: country
+        country: country,
+        animating: false
       })
     } else {
       this.setState({
@@ -61,18 +62,18 @@ export default class HomeScreen extends React.Component {
       return (
         <View>
           <Title/>
-            <View style={styles.ListView}>
-              <Text style={{fontWeight: 'bold', fontSize: 20, color:'rgb(26,163,219)', marginBottom: 10}}>Select a  Country</Text>
+            <View style={styles.ListViewContainer}>
+              <Text style={{fontWeight: 'bold', fontSize: 25, color:'rgb(26,163,219)', marginBottom: 10}}>Select a  Country</Text>
               <ListView
                 initialListSize={180}
-                contentContainerStyle={styles.List}
+                contentContainerStyle={styles.ListView}
                 dataSource={this.state.names}
                 renderRow = {(country) => (
                   <TouchableOpacity 
-                    style={{marginBottom: 10, marginRight: 20}} 
+                    style={{marginBottom: 10, marginRight: 20, paddingLeft: 5, paddingRight: 5, borderRadius: 2, backgroundColor:'rgba(26,163,219,.4)' }} 
                     onPress={function(){self.displayInfo(country)}}
                     >
-                    <Text style={{fontWeight: 'bold',fontSize: 20}}>
+                    <Text style={{textAlign: 'center',fontSize: 20, color: 'white'}}>
                       {country.name}
                     </Text>
                   </TouchableOpacity>
@@ -83,8 +84,13 @@ export default class HomeScreen extends React.Component {
       );
     } else {
       return (
-        <View style={styles.ListView}>
-          <Text>Loading...</Text>
+        <View style={styles.loading}>
+          <Text style={{fontSize: 30}}>Loading...</Text>
+            <ActivityIndicator
+            animating={this.state.animating}
+            style={{height: 80}}
+            size="large"
+            />
         </View>
       )
     }
@@ -93,73 +99,30 @@ export default class HomeScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
-  ListView: {
+  loading: {
+    marginTop: height * .5 - 16,
+    justifyContent: 'center' ,
+    alignItems: 'center'
+  },
+  ListViewContainer: {
+    marginTop: -20,
     height: height * .8,
-    alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   listRow: {
+    overflow: 'hidden',
     flexDirection: 'row',
-    marginTop: 10
+    marginTop: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  List: {
+  ListView: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: width * .8,
-    marginTop: 15,
-    marginBottom: 15,
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  return: {
-    borderRadius: 5,
-    borderColor: 'black',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    padding: 4,
-    marginTop: 15,
-  },
-  select: {
-    marginTop: 20,
     alignItems: 'center',
-    justifyContent: 'center'
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: {height: -3},
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+    paddingBottom: 25
   },
 });

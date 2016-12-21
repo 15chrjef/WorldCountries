@@ -6,19 +6,19 @@
   "version": "1.0.0",
   "orientation": "portrait",
   "primaryColor": "#cccccc",
-  "iconUrl": "https://s3.amazonaws.com/exp-brand-assets/ExponentEmptyManifest_192.png",
+  "iconUrl": "https://s3-us-west-1.amazonaws.com/unofficialapppictures/Flag_of_the_United_Nations.svg.png",
   "notification": {
-    "iconUrl": "https://s3.amazonaws.com/exp-us-standard/placeholder-push-icon-blue-circle.png",
+    "iconUrl": "https://s3-us-west-1.amazonaws.com/unofficialapppictures/Flag_of_the_United_Nations.svg.png",
     "color": "#000000"
   },
   "loading": {
-    "iconUrl": "https://s3.amazonaws.com/exp-brand-assets/ExponentEmptyManifest_192.png",
+    "iconUrl": "https://s3-us-west-1.amazonaws.com/unofficialapppictures/Flag_of_the_United_Nations.svg.png",
     "hideExponentText": false
   },
   "packagerOpts": {
     "assetExts": ["ttf"]
   },
-  "ios": {
-    "supportsTablet": true
+  "android" : {
+    "package": "org.jemerichii1.rnplay.exp"
   }
 }
